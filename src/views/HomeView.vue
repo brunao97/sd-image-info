@@ -108,9 +108,27 @@ async function handleDownloadPicture() {
   const blob = await removeExif(rSelected.value.file);
   saveImage(blob, rPictureFilename.value);
 }
+
+async function handleDownloadAll() {
+  rImages.value.forEach(async (image) => {
+    const blob = await removeExif(image.file);
+    
+    saveImage(blob, image.filename + "_no_meta_data");
+  })
+
+}
 </script>
 
 <template>
+    <button
+      @click="handleDownloadAll"
+      class="inline-flex items-center text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center sm:mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+    >
+      <IconDownload />
+
+      Download All
+    </button>
+ 
   <div
     v-if="rShowMessage"
     class="fixed flex z-50 items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-white divide-x divide-gray-200 rounded-lg shadow top-5 right-5 dark:text-gray-400 dark:divide-gray-700 space-x dark:bg-gray-800"
@@ -141,6 +159,10 @@ async function handleDownloadPicture() {
         </button>
       </div>
     </div>
+
+   
+
+
 
     <DefaultPrompt
       v-if="rSelected.type === 'default'"
@@ -182,12 +204,16 @@ async function handleDownloadPicture() {
 
       Clear
     </button>
+    
     <div class="columns-2 md:columns-3 lg:columns-4 mt-1">
       <div v-for="rImage in rImages" :key="rImage.id" class="inline-block mb-2">
         <Card :url="rImage.imageURL" @click="() => (rSelected = rImage)" />
       </div>
     </div>
+    
   </div>
+
+  
 
   <div v-else class="w-full h-full flex items-center">
     <FileUploader @files-change="handleFile" />
