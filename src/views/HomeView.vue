@@ -51,7 +51,7 @@ async function getImageData(file) {
         type = "default";
       } else if (res.parameters) {
         params = res.parameters;
-        type = "default";
+        type = file?.type || 'default';
       } else if (res.workflow) {
         // comfyui
         params = res;
@@ -59,7 +59,7 @@ async function getImageData(file) {
       } else {
         type = "notFound";
       }
-
+      
       resolve({ params, type, imageURL, id, filename, file });
     });
   });
@@ -112,8 +112,8 @@ async function handleDownloadPicture() {
 async function handleDownloadAll() {
   rImages.value.forEach(async (image) => {
     const blob = await removeExif(image.file);
-    
-    saveImage(blob, image.filename + "_no_meta_data");
+    const handledBlob = blob.slice(0, blob.size, image?.file?.type || 'image/jpeg')
+    saveImage(handledBlob, image.filename + "_no_meta_data");
   })
 
 }
