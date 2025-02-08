@@ -107,14 +107,16 @@ async function handleSavePicture() {
 async function handleDownloadPicture() {
   rShowSavePictureModal.value = false;
   const blob = await removeExif(rSelected.value.file);
-  saveImage(blob, rPictureFilename.value);
+  const cleanFilename = rPictureFilename.value.replace(/\.[^/.]+$/, "");
+  saveImage(blob, cleanFilename);
 }
 
 async function handleDownloadAll() {
   if (rImages.value && rImages.value.length > 1) {
     for (const image of rImages.value) {
       const blob = await removeExif(image.file);
-      saveImage(blob, image.filename + "_no_meta_data");
+      const cleanFilename = image.filename.replace(/\.[^/.]+$/, "");
+      saveImage(blob, `${cleanFilename}_no_meta_data`);
     }
   }
 }
